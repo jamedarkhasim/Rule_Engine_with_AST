@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rule Engine Application</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f7f7f7;
+            color: #333;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 40px auto;
+            padding: 20px;
+            background-color: #fff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            border-radius: 8px;
+        }
+
+        h1 {
+            text-align: center;
+            color: #1a73e8;
+            margin-bottom: 30px;
+        }
+
+        .section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background-color: #fafafa;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: #1a73e8;
+            margin-bottom: 20px;
+        }
+
+        form {
+            margin-bottom: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            margin-bottom: 5px;
+            font-weight: bold;
+            color: #333;
+        }
+
+        .form-group input[type="text"],
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-sizing: border-box;
+        }
+
+        .form-group textarea {
+            height: 100px;
+        }
+
+        .form-group button {
+            padding: 10px;
+            border: none;
+            background-color: #1a73e8;
+            color: white;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .form-group button:hover {
+            background-color: #165abb;
+        }
+
+        pre {
+            background-color: #f4f4f4;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            margin-top: 20px;
+        }
+
+        /* Rules section */
+        .rules-container {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .rule-container {
+            border: 1px solid #ddd;
+            padding: 10px;
+            border-radius: 4px;
+            background-color: #f7f7f7;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .rule-container label {
+            margin-right: 10px;
+        }
+
+        .add-rule-btn {
+            background-color: #28a745;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .container {
+                padding: 15px;
+            }
+
+            .form-group button {
+                padding: 8px;
+                font-size: 14px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rule Engine Application</h1>
+
+        <!-- Create Rule Section -->
+        <div class="section">
+            <h2>Create Rule</h2>
+            <form id="create-rule-form">
+                <div class="form-group">
+                    <label for="ruleName">Rule Name:</label>
+                    <input type="text" id="ruleName" name="ruleName" placeholder="Enter Rule Name">
+                </div>
+                <div class="form-group">
+                    <label for="ruleString">Rule:</label>
+                    <input type="text" id="ruleString" name="ruleString" placeholder="Enter Rule Expression">
+                </div>
+                <div class="form-group">
+                    <button type="submit">Create Rule</button>
+                </div>
+            </form>
+            <pre id="create-rule-result"></pre>
+        </div>
+
+        <!-- Combine Rules Section -->
+        <div class="section">
+            <h2>Combine Rules</h2>
+            <form id="combine-rules-form">
+                <h3>Enter Rules to Combine:</h3>
+                <div id="rules-inputs" class="rules-container">
+                    <div class="rule-container">
+                        <div>
+                            <label for="combine-rule1">Rule 1:</label>
+                            <input type="text" id="combine-rule1" name="rule1" required>
+                        </div>
+                        <div>
+                            <label for="operator1">Operator:</label>
+                            <select id="operator1" name="operator1">
+                                <option value="AND">AND</option>
+                                <option value="OR">OR</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <button type="button" id="add-rule" class="add-rule-btn">Add Another Rule</button>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Combine Rules</button>
+                </div>
+            </form>
+            <pre id="combine-rules-result"></pre>
+        </div>
+
+        <!-- Evaluate Rule Section -->
+        <div class="section">
+            <h2>Evaluate Rule</h2>
+            <form id="evaluate-rule-form">
+                <div class="form-group">
+                    <label for="evaluate-ast">Rule Name:</label>
+                    <input type="text" id="evaluate-ast" name="ast" required placeholder="Enter Rule Name">
+                </div>
+                <div class="form-group">
+                    <label for="evaluate-data">Data JSON:</label>
+                    <textarea id="evaluate-data" name="data" required placeholder="Enter Data in JSON format"></textarea>
+                </div>
+                <div class="form-group">
+                    <button type="submit">Evaluate Rule</button>
+                </div>
+            </form>
+            <pre id="evaluate-rule-result"></pre>
+        </div>
+    </div>
+
+    <script>
+        function generateTreeHTML(node, prefix = '', isLeft = true) {
+            if (!node) return '';
+
+            let treeHTML = '';
+            treeHTML += prefix + (isLeft ? "├── " : "└── ") + (node.type === 'operator' ? node.operator : `${node.key} ${node.operator} ${node.value}`) + '<br>';
+
+            if (node.left) treeHTML += generateTreeHTML(node.left, prefix + (isLeft ? "│   " : "    "), true);
+            if (node.right) treeHTML += generateTreeHTML(node.right, prefix + (isLeft ? "│   " : "    "), false);
+
+            return treeHTML;
+        }
+
+        // Handle Create Rule form submission
+        document.getElementById('create-rule-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const ruleName = document.getElementById('ruleName').value;
+            const ruleString = document.getElementById('ruleString').value;
+            const response = await fetch('/api/rules/create_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ruleName, ruleString }),
+            });
+            const result = await response.json();
+            document.getElementById('create-rule-result').textContent = `Rule Name: ${ruleName}`;
+        });
+
+        // Handle Combine Rules form submission
+        document.getElementById('combine-rules-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const op = document.getElementById('operator1').value;
+            const rules = Array.from(document.querySelectorAll('input[id^="combine-rule"]')).map(input => input.value);
+            const response = await fetch('/api/rules/combine_rules', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ rules, op }),
+            });
+            const result = await response.json();
+            document.getElementById('combine-rules-result').innerHTML = generateTreeHTML(result.ruleAST);
+        });
+
+        // Add functionality to dynamically add more rule inputs
+        document.getElementById('add-rule').addEventListener('click', function() {
+            const ruleInputContainer = document.createElement('div');
+            ruleInputContainer.classList.add('rule-container');
+            const ruleCount = document.querySelectorAll('input[id^="combine-rule"]').length + 1;
+            ruleInputContainer.innerHTML = `
+                <div>
+                    <label for="combine-rule${ruleCount}">Rule ${ruleCount}:</label>
+                    <input type="text" id="combine-rule${ruleCount}" name="rule${ruleCount}" required>
+                </div>
+            `;
+            document.getElementById('rules-inputs').appendChild(ruleInputContainer);
+        });
+
+        // Handle Evaluate Rule form submission
+        document.getElementById('evaluate-rule-form').addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const ast = document.getElementById('evaluate-ast').value;
+            const data = document.getElementById('evaluate-data').value;
+            const response = await fetch('/api/rules/evaluate_rule', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ ast, data: JSON.parse(data) }),
+            });
+            const result = await response.json();
+            document.getElementById('evaluate-rule-result').textContent = `Result: ${result}`;
+        });
+    </script>
+</body>
+</html>

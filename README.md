@@ -98,7 +98,7 @@ The engine can evaluate a stored rule against custom data. The data is passed as
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/yourusername/rule-engine-ast.git
+   git clone https://github.com/jamedarkhasim/Rule_Engine_with_AST.git
    ```
 
 2. Navigate to the project directory:

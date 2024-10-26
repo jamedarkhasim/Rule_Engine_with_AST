@@ -19,7 +19,7 @@ backend
 │── Rule.js                 # Mongoose model for rules stored in MongoDB
 │── ruleRoutes.js           # Defines API routes for rule operations
 │── ast.js                  # Utilities for AST operations
-                   # Main server file to run the backend
+├── server.js                   # Main server file to run the backend
 ```
 
 **Frontend Folder:**

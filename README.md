@@ -11,8 +11,6 @@ This project implements a rule engine using Abstract Syntax Tree (AST) to dynami
 
 ## Project Structure
 
-Here's how you can structure your backend and frontend folders with the requested files:
-
 **Backend Folder:**
 
 ```
@@ -157,4 +155,3 @@ This project is licensed under the MIT License.
 
 --- 
 
-This `README.md` file provides an overview of your project, details on installation, and instructions on how to use the various features. Let me know if you need any further customizations!

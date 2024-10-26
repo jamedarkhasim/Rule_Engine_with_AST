@@ -3,121 +3,104 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Rule Engine Application</title>
+    <title>Rule Engine</title>
     <style>
         body {
             font-family: Arial, sans-serif;
             margin: 0;
             padding: 0;
-            background-color: #f7f7f7;
+            background-color: #f4f4f9;
             color: #333;
         }
 
         .container {
-            max-width: 800px;
-            margin: 40px auto;
+            max-width: 700px;
+            margin: 30px auto;
             padding: 20px;
             background-color: #fff;
+            border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-            border-radius: 8px;
         }
 
-        h1 {
+        h1, h2, h3 {
             text-align: center;
-            color: #1a73e8;
-            margin-bottom: 30px;
-        }
-
-        .section {
-            margin-bottom: 40px;
-            padding: 20px;
-            background-color: #fafafa;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
-        }
-
-        h2 {
-            color: #1a73e8;
-            margin-bottom: 20px;
+            color: #00509e;
+            font-weight: bold;
         }
 
         form {
-            margin-bottom: 20px;
+            margin: 0;
         }
 
-        .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 15px;
+        form div, form label {
+            display: block;
+            margin-bottom: 8px;
         }
 
-        .form-group label {
-            margin-bottom: 5px;
-            font-weight: bold;
-            color: #333;
-        }
-
-        .form-group input[type="text"],
-        .form-group textarea,
-        .form-group select {
+        form input[type="text"], form textarea, form select {
             width: 100%;
             padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
+            background-color: #f9f9f9;
+            color: #333;
             box-sizing: border-box;
+            font-size: 16px;
         }
 
-        .form-group textarea {
+        form textarea {
             height: 100px;
         }
 
-        .form-group button {
-            padding: 10px;
+        form button {
+            display: block;
+            width: 100%;
+            padding: 12px;
+            margin-top: 15px;
             border: none;
-            background-color: #1a73e8;
-            color: white;
-            border-radius: 4px;
+            background-color: #00509e;
+            color: #fff;
+            border-radius: 6px;
             cursor: pointer;
             font-size: 16px;
         }
 
-        .form-group button:hover {
-            background-color: #165abb;
+        form button:hover {
+            background-color: #006bbd;
         }
 
         pre {
-            background-color: #f4f4f4;
-            padding: 15px;
+            background-color: #f1f3f5;
+            padding: 10px;
             border: 1px solid #ddd;
-            border-radius: 4px;
+            border-radius: 6px;
             white-space: pre-wrap;
             word-wrap: break-word;
-            margin-top: 20px;
-        }
-
-        /* Rules section */
-        .rules-container {
-            display: flex;
-            flex-direction: column;
-            gap: 15px;
+            margin-top: 10px;
+            color: #333;
         }
 
         .rule-container {
-            border: 1px solid #ddd;
             padding: 10px;
-            border-radius: 4px;
-            background-color: #f7f7f7;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+            margin-bottom: 10px;
+            background-color: #f9f9f9;
+            border: 1px solid #ddd;
+            border-radius: 6px;
         }
 
         .rule-container label {
-            margin-right: 10px;
+            margin-right: 8px;
+            color: #00509e;
         }
 
-        .add-rule-btn {
-            background-color: #28a745;
+        #add-rule {
+            margin-top: 15px;
+            background-color: #007bff;
+            color: #fff;
+        }
+
+        #add-rule:hover {
+            background-color: #0062cc;
         }
 
         /* Responsive Design */
@@ -126,9 +109,37 @@
                 padding: 15px;
             }
 
-            .form-group button {
-                padding: 8px;
+            form input[type="text"], form textarea, form select {
                 font-size: 14px;
+            }
+
+            form button {
+                font-size: 14px;
+                padding: 10px;
+            }
+
+            form textarea {
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .container {
+                padding: 10px;
+                margin: 20px 10px;
+            }
+
+            form input[type="text"], form textarea, form select {
+                font-size: 12px;
+            }
+
+            form button {
+                font-size: 12px;
+                padding: 8px;
+            }
+
+            form textarea {
+                height: 70px;
             }
         }
     </style>
@@ -136,77 +147,57 @@
 <body>
     <div class="container">
         <h1>Rule Engine Application</h1>
+        
+        <h2>Create Rule</h2>
+        <form id="create-rule-form">
+            <div>
+                <label for="ruleName">Rule Name:</label>
+                <input type="text" id="ruleName" name="ruleName" >
+            </div>
+            <div>
+                <label for="ruleString">Rule:</label>
+                <input type="text" id="ruleString" name="ruleString" >
+            </div>
+            <button type="submit">Create Rule</button>
+        </form>
+        <pre id="create-rule-result"></pre>
 
-        <!-- Create Rule Section -->
-        <div class="section">
-            <h2>Create Rule</h2>
-            <form id="create-rule-form">
-                <div class="form-group">
-                    <label for="ruleName">Rule Name:</label>
-                    <input type="text" id="ruleName" name="ruleName" placeholder="Enter Rule Name">
+        <h2>Combine Rules</h2>
+        <form id="combine-rules-form">
+            <h3>Enter Rules to Combine:</h3>
+            <div id="rules-inputs">
+                <div class="rule-container">
+                    <label for="combine-rule1">Rule 1:</label>
+                    <input type="text" id="combine-rule1" name="rule1" required>
+                    <label for="operator1">Operator:</label>
+                    <select id="operator1" name="operator1">
+                        <option value="AND">AND</option>
+                        <option value="OR">OR</option>
+                    </select>
                 </div>
-                <div class="form-group">
-                    <label for="ruleString">Rule:</label>
-                    <input type="text" id="ruleString" name="ruleString" placeholder="Enter Rule Expression">
-                </div>
-                <div class="form-group">
-                    <button type="submit">Create Rule</button>
-                </div>
-            </form>
-            <pre id="create-rule-result"></pre>
-        </div>
+            </div>
+            <button type="button" id="add-rule">Add Another Rule</button>
+            <button type="submit">Combine Rules</button>
+        </form>
+        <pre id="combine-rules-result"></pre>
 
-        <!-- Combine Rules Section -->
-        <div class="section">
-            <h2>Combine Rules</h2>
-            <form id="combine-rules-form">
-                <h3>Enter Rules to Combine:</h3>
-                <div id="rules-inputs" class="rules-container">
-                    <div class="rule-container">
-                        <div>
-                            <label for="combine-rule1">Rule 1:</label>
-                            <input type="text" id="combine-rule1" name="rule1" required>
-                        </div>
-                        <div>
-                            <label for="operator1">Operator:</label>
-                            <select id="operator1" name="operator1">
-                                <option value="AND">AND</option>
-                                <option value="OR">OR</option>
-                            </select>
-                        </div>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <button type="button" id="add-rule" class="add-rule-btn">Add Another Rule</button>
-                </div>
-                <div class="form-group">
-                    <button type="submit">Combine Rules</button>
-                </div>
-            </form>
-            <pre id="combine-rules-result"></pre>
-        </div>
-
-        <!-- Evaluate Rule Section -->
-        <div class="section">
-            <h2>Evaluate Rule</h2>
-            <form id="evaluate-rule-form">
-                <div class="form-group">
-                    <label for="evaluate-ast">Rule Name:</label>
-                    <input type="text" id="evaluate-ast" name="ast" required placeholder="Enter Rule Name">
-                </div>
-                <div class="form-group">
-                    <label for="evaluate-data">Data JSON:</label>
-                    <textarea id="evaluate-data" name="data" required placeholder="Enter Data in JSON format"></textarea>
-                </div>
-                <div class="form-group">
-                    <button type="submit">Evaluate Rule</button>
-                </div>
-            </form>
-            <pre id="evaluate-rule-result"></pre>
-        </div>
+        <h2>Evaluate Rule</h2>
+        <form id="evaluate-rule-form">
+            <div>
+                <label for="evaluate-ast">Rule Name:</label>
+                <input type="text" id="evaluate-ast" name="ast" required>
+            </div>
+            <div>
+                <label for="evaluate-data">Data JSON:</label>
+                <textarea id="evaluate-data" name="data" required></textarea>
+            </div>
+            <button type="submit">Evaluate Rule</button>
+        </form>
+        <pre id="evaluate-rule-result"></pre>
     </div>
 
     <script>
+        // Your existing JavaScript code remains unchanged
         function generateTreeHTML(node, prefix = '', isLeft = true) {
             if (!node) return '';
 
@@ -217,6 +208,11 @@
             if (node.right) treeHTML += generateTreeHTML(node.right, prefix + (isLeft ? "│   " : "    "), false);
 
             return treeHTML;
+        }
+
+        function displayTree(tree) {
+            const treeHTML = generateTreeHTML(tree);
+            document.getElementById('combined-rules-tree').innerHTML = treeHTML;
         }
 
         // Handle Create Rule form submission
@@ -232,7 +228,9 @@
                 body: JSON.stringify({ ruleName, ruleString }),
             });
             const result = await response.json();
-            document.getElementById('create-rule-result').textContent = `Rule Name: ${ruleName}`;
+            let treeHTML = generateTreeHTML(result.ruleAST);
+            treeHTML += `<br><p>Rule Name: ${ruleName} Rule:${ruleString}</p>`;
+            document.getElementById('create-rule-result').innerHTML = treeHTML;
         });
 
         // Handle Combine Rules form submission
@@ -248,7 +246,9 @@
                 body: JSON.stringify({ rules, op }),
             });
             const result = await response.json();
-            document.getElementById('combine-rules-result').innerHTML = generateTreeHTML(result.ruleAST);
+            let treeHTML = generateTreeHTML(result.ruleAST);
+            treeHTML += `<br><p>Rule Name: ${result.ruleName}</p>`;
+            document.getElementById('combine-rules-result').innerHTML = treeHTML;
         });
 
         // Add functionality to dynamically add more rule inputs
@@ -257,12 +257,11 @@
             ruleInputContainer.classList.add('rule-container');
             const ruleCount = document.querySelectorAll('input[id^="combine-rule"]').length + 1;
             ruleInputContainer.innerHTML = `
-                <div>
-                    <label for="combine-rule${ruleCount}">Rule ${ruleCount}:</label>
-                    <input type="text" id="combine-rule${ruleCount}" name="rule${ruleCount}" required>
-                </div>
+                <label for="combine-rule${ruleCount}">Rule ${ruleCount}:</label>
+                <input type="text" id="combine-rule${ruleCount}" name="rule${ruleCount}" required>
             `;
             document.getElementById('rules-inputs').appendChild(ruleInputContainer);
+            this.remove();
         });
 
         // Handle Evaluate Rule form submission
@@ -278,7 +277,7 @@
                 body: JSON.stringify({ ast, data: JSON.parse(data) }),
             });
             const result = await response.json();
-            document.getElementById('evaluate-rule-result').textContent = `Result: ${result}`;
+            document.getElementById('evaluate-rule-result').textContent = JSON.stringify(result, null, 2);
         });
     </script>
 </body>
